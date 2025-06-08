@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  reply-service:
+    container_name: reply-service
+    image: ${DOCKER_USERNAME}/reply-service:latest
+    ports:
+      - "8085:8085"
+    env_file:
+      - .env
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true

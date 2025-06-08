@@ -1,0 +1,20 @@
+spring:
+  config:
+    import: optional:dotenv:.env
+  datasource:
+    url: jdbc:mysql://${EC2_HOST}:3306/piece_of_cake
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+  data:
+    mongodb:
+      uri: mongodb://${EC2_MONGOID}:${EC2_MONGOPW}@${EC2_HOST}:27017/reply-service
+      auto-index-creation: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${EC2_HOST}:8761/eureka/
