@@ -1,5 +1,5 @@
 server:
-  port: 8085
+  port: 8086
   forward-headers-strategy: framework
 
 spring:
@@ -8,7 +8,7 @@ spring:
   application:
     name: reply-service
   profiles:
-    active: dev
+    active: local
 
   jpa:
     hibernate:

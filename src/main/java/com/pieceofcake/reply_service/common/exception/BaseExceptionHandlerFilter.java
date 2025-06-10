@@ -1,8 +1,8 @@
 package com.pieceofcake.reply_service.common.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pieceofcake.board_service.common.entity.BaseResponseEntity;
-import com.pieceofcake.board_service.common.entity.BaseResponseStatus;
+import com.pieceofcake.reply_service.common.entity.BaseResponseEntity;
+import com.pieceofcake.reply_service.common.entity.BaseResponseStatus;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

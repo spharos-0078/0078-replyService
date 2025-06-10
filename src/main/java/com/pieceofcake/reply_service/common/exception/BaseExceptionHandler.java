@@ -1,7 +1,7 @@
 package com.pieceofcake.reply_service.common.exception;
 
-import com.pieceofcake.board_service.common.entity.BaseResponseEntity;
-import com.pieceofcake.board_service.common.entity.BaseResponseStatus;
+import com.pieceofcake.reply_service.common.entity.BaseResponseEntity;
+import com.pieceofcake.reply_service.common.entity.BaseResponseStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
