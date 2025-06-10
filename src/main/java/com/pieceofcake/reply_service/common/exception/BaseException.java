@@ -1,6 +1,6 @@
 package com.pieceofcake.reply_service.common.exception;
 
-import com.pieceofcake.board_service.common.entity.BaseResponseStatus;
+import com.pieceofcake.reply_service.common.entity.BaseResponseStatus;
 import lombok.Getter;
 
 @Getter
