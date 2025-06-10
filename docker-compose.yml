@@ -5,7 +5,7 @@ services:
     container_name: reply-service
     image: ${DOCKER_USERNAME}/reply-service:latest
     ports:
-      - "8085:8085"
+      - "8086:8086"
     env_file:
       - .env
     networks:
