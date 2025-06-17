@@ -13,7 +13,5 @@ public class CreateReplyRequestVo {
     private String boardUuid;
     private BoardType boardType;
     private String replyContent;
-    private String parentReplyUuid;
-    private LocalDateTime createdAt;
 
 }

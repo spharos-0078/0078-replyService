@@ -19,16 +19,13 @@ public class Reply {
     private String id;
 
     private String replyUuid;
-
     private BoardType boardType;
-
     private String boardUuid;
-
     private String replyContent;
-
     private String memberUuid;
-
     private String parentReplyUuid;
+
+    private boolean deleted = false;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -38,8 +35,8 @@ public class Reply {
 
     @Builder
     public Reply(String id, String replyUuid, BoardType boardType, String boardUuid,
-                 String replyContent, String memberUuid,
-                 String parentReplyUuid, LocalDateTime createdAt, LocalDateTime updatedAt
+                 String replyContent, String memberUuid, String parentReplyUuid,
+                 boolean deleted, LocalDateTime createdAt, LocalDateTime updatedAt
     ) {
         this.id = id;
         this.replyUuid = replyUuid;
@@ -48,7 +45,10 @@ public class Reply {
         this.replyContent = replyContent;
         this.memberUuid = memberUuid;
         this.parentReplyUuid = parentReplyUuid;
+        this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public void softDelete() { this.deleted = true; }
 }
