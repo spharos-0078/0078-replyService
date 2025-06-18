@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -26,7 +27,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public void createReply(CreateReplyRequestDto createReplyRequestDto) {
-        replyRepository.save(createReplyRequestDto.toEntity());
+        replyRepository.save(createReplyRequestDto.toEntity(UUID.randomUUID().toString().substring(0, 32)));
     }
 
     @Override
