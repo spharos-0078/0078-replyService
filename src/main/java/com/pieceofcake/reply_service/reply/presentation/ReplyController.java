@@ -42,7 +42,7 @@ public class ReplyController {
 
 
     // 댓글 생성
-    @Operation(summary = "댓글 생성 (커뮤니티 & 문의)")
+    @Operation(summary = "댓글 생성")
     @PostMapping
     public BaseResponseEntity<Void> createReply(
             @RequestHeader("X-Member-Uuid") String memberUuid,
@@ -54,7 +54,7 @@ public class ReplyController {
 
 
     // 댓글 수정
-    @Operation(summary = "댓글 수정 (커뮤니티 & 문의)")
+    @Operation(summary = "댓글 수정")
     @PutMapping
     public BaseResponseEntity<Void> updateReply(
             @RequestHeader("X-Member-Uuid") String memberUuid,
@@ -66,7 +66,7 @@ public class ReplyController {
 
 
     // 댓글 삭제
-    @Operation(summary = "댓글 삭제 (커뮤니티 & 문의)")
+    @Operation(summary = "댓글 삭제")
     @DeleteMapping("/{replyUuid}")
     public BaseResponseEntity<Void> deleteReply(
             @RequestHeader("X-Member-Uuid") String memberUuid,
@@ -89,9 +89,9 @@ public class ReplyController {
     }
 
 
-    // 댓글 상세 조회
-    @Operation(summary = "댓글 상세 조회")
-    @GetMapping("/{replyUuid}")
+    // 커뮤니티 댓글 상세 조회
+    @Operation(summary = "커뮤니티 댓글 상세 조회")
+    @GetMapping("/community/{replyUuid}")
     public BaseResponseEntity<GetReplyDetailResponseVo> getReplyDetail(
             @RequestHeader(value = "X-Member-Uuid", required = false) String memberUuid,
             @PathVariable String replyUuid
@@ -100,6 +100,9 @@ public class ReplyController {
 
         return new BaseResponseEntity<>(result.toVo());
     }
+
+
+    // 문의 댓글 상세 조회
 
 
     // 대댓글 작성
