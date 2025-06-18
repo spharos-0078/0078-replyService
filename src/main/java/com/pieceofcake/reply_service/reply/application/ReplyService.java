@@ -6,7 +6,6 @@ import com.pieceofcake.reply_service.reply.dto.in.DeleteReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
-import com.pieceofcake.reply_service.reply.vo.out.GetReReplyResponseVo;
 
 import java.util.List;
 

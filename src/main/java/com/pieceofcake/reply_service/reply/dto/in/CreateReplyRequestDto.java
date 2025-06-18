@@ -35,17 +35,17 @@ public class CreateReplyRequestDto {
         return CreateReplyRequestDto.builder()
                 .boardUuid(createReplyRequestVo.getBoardUuid())
                 .boardType(createReplyRequestVo.getBoardType())
-                .replyUuid(UUID.randomUUID().toString().substring(0, 32))
                 .replyContent(createReplyRequestVo.getReplyContent())
                 .memberUuid(memberUuid)
                 .build();
     }
 
-    public Reply toEntity() {
+    public Reply toEntity(String replyUuid) {
         return Reply.builder()
                 .boardUuid(boardUuid)
                 .boardType(boardType)
                 .replyContent(replyContent)
+                .replyUuid(replyUuid)
                 .memberUuid(memberUuid)
                 .build();
     }
