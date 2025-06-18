@@ -1,6 +1,7 @@
 package com.pieceofcake.reply_service.reply.application;
 
 import com.pieceofcake.reply_service.reply.domain.Reply;
+import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
@@ -59,4 +60,18 @@ public class ReplyServiceImpl implements ReplyService {
         return reReplyList.stream().map(GetReReplyResponseDto::from).toList();
     }
 
+    @Override
+    public void createChildReply(CreateChildReplyRequestDto childReplyRequestDto) {
+        Reply parentReply = replyRepository.findByReplyUuidAndDeletedFalse(childReplyRequestDto.getParentReplyUuid())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 부모 댓글입니다."));
+
+        if(parentReply.getParentReplyUuid() != null) {
+            throw new IllegalArgumentException("댓글에는 또 다른 대댓글을 작성할 수 없습니다.");
+        }
+
+        childReplyRequestDto.setBoardType(parentReply.getBoardType());
+        childReplyRequestDto.setBoardUuid(parentReply.getBoardUuid());
+
+        replyRepository.save(childReplyRequestDto.toEntity(UUID.randomUUID().toString().substring(0, 32)));
+    }
 }
