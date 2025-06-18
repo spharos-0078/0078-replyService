@@ -7,11 +7,13 @@ import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
+import com.pieceofcake.reply_service.reply.dto.out.GetReplyDetailResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
 import com.pieceofcake.reply_service.reply.vo.in.CreateChildReplyRequestVo;
 import com.pieceofcake.reply_service.reply.vo.in.CreateReplyRequestVo;
 import com.pieceofcake.reply_service.reply.vo.in.UpdateReplyRequestVo;
 import com.pieceofcake.reply_service.reply.vo.out.GetReReplyResponseVo;
+import com.pieceofcake.reply_service.reply.vo.out.GetReplyDetailResponseVo;
 import com.pieceofcake.reply_service.reply.vo.out.GetReplyResponseVo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class ReplyController {
         return new BaseResponseEntity<>(result);
     }
 
+
     // 댓글 생성
     @Operation(summary = "댓글 생성 (커뮤니티 & 문의)")
     @PostMapping
@@ -48,6 +51,7 @@ public class ReplyController {
         replyService.createReply(CreateReplyRequestDto.from(memberUuid, createReplyRequestVo));
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
+
 
     // 댓글 수정
     @Operation(summary = "댓글 수정 (커뮤니티 & 문의)")
@@ -60,6 +64,7 @@ public class ReplyController {
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
 
+
     // 댓글 삭제
     @Operation(summary = "댓글 삭제 (커뮤니티 & 문의)")
     @DeleteMapping("/{replyUuid}")
@@ -71,9 +76,6 @@ public class ReplyController {
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
 
-//    // 댓글 상세 조회
-//    @Operation(summary = "댓글 상세 조회")
-//    @GetMapping("/{replyUuid}")
 
     // 대댓글 전체 조회 (부모 댓글 기준으로 대댓글 조회)
     @Operation(summary = "대댓글 전체 조회 (커뮤니티 & 문의)")
@@ -85,6 +87,20 @@ public class ReplyController {
                 .stream().map(GetReReplyResponseDto::toVo).toList();
         return new BaseResponseEntity<>(result);
     }
+
+
+    // 댓글 상세 조회
+    @Operation(summary = "댓글 상세 조회")
+    @GetMapping("/{replyUuid}")
+    public BaseResponseEntity<GetReplyDetailResponseVo> getReplyDetail(
+            @RequestHeader(value = "X-Member-Uuid", required = false) String memberUuid,
+            @PathVariable String replyUuid
+    ) {
+        GetReplyDetailResponseDto result = replyService.getReplyDetail(memberUuid, replyUuid);
+
+        return new BaseResponseEntity<>(result.toVo());
+    }
+
 
     // 대댓글 작성
     @Operation(summary = "대댓글 작성")
@@ -98,26 +114,38 @@ public class ReplyController {
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
 
-    // 대댓글 수정
-    @Operation(summary = "대댓글 수정")
-    @PutMapping("/child/{replyUuid}")
-    public BaseResponseEntity<Void> updateChildReply(
-            @RequestHeader("X-Member-Uuid") String memberUuid,
-            @RequestBody UpdateReplyRequestVo updateReplyRequestVo
-    ) {
-        replyService.updateReply(UpdateReplyRequestDto.from(updateReplyRequestVo));
-        return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
-    }
 
-    // 대댓글 삭제
-    @Operation(summary = "대댓글 삭제")
-    @DeleteMapping("/child/{replyUuid}")
-    public BaseResponseEntity<Void> deleteChildReply(
-            @RequestHeader("X-Member-Uuid") String memberUuid,
-            @PathVariable String replyUuid
-    ) {
-        replyService.deleteReply(memberUuid, replyUuid);
-        return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
-    }
+//    // 대댓글 상세 조회
+//    @Operation(summary = "대댓글 상세 조회")
+//    @GetMapping("/child/{replyUuid}")
+//    public BaseResponseEntity<GetReplyDetailResponseVo> getChildReplyDetail(
+//            @RequestHeader("X-Member-Uuid") String memberUuid,
+//            @PathVariable String replyUuid
+//    ) {
+//        GetReplyDetailResponseDto result = replyService.getChildReplyDetail(memberUuid, replyUuid);
+//        return new BaseResponseEntity<>(result.toVo());
+//    }
+
+//    // 대댓글 수정
+//    @Operation(summary = "대댓글 수정")
+//    @PutMapping("/child")
+//    public BaseResponseEntity<Void> updateChildReply(
+//            @RequestHeader("X-Member-Uuid") String memberUuid,
+//            @RequestBody UpdateReplyRequestVo updateReplyRequestVo
+//    ) {
+//        replyService.updateReply(UpdateReplyRequestDto.from(updateReplyRequestVo));
+//        return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
+//    }
+//
+//    // 대댓글 삭제
+//    @Operation(summary = "대댓글 삭제")
+//    @DeleteMapping("/child/{replyUuid}")
+//    public BaseResponseEntity<Void> deleteChildReply(
+//            @RequestHeader("X-Member-Uuid") String memberUuid,
+//            @PathVariable String replyUuid
+//    ) {
+//        replyService.deleteReply(memberUuid, replyUuid);
+//        return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
+//    }
 
 }

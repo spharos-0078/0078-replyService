@@ -5,6 +5,7 @@ import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
+import com.pieceofcake.reply_service.reply.dto.out.GetReplyDetailResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
 import com.pieceofcake.reply_service.reply.vo.in.CreateReplyRequestVo;
 
@@ -23,4 +24,8 @@ public interface ReplyService {
     List<GetReReplyResponseDto> getReReplyListByParentReplyUuid(String parentReplyUuid);
 
     void createChildReply(CreateChildReplyRequestDto childReplyRequestDto);
+
+    GetReplyDetailResponseDto getReplyDetail(String replyUuid, String memberUuid);
+
+    GetReplyDetailResponseDto getChildReplyDetail(String memberUuid, String replyUuid);
 }

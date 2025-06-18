@@ -5,10 +5,12 @@ import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
+import com.pieceofcake.reply_service.reply.dto.out.GetReplyDetailResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
 import com.pieceofcake.reply_service.reply.infrastructure.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,11 +27,13 @@ public class ReplyServiceImpl implements ReplyService {
         return replyList.stream().map(GetReplyResponseDto::from).toList();
     }
 
+    @Transactional
     @Override
     public void createReply(CreateReplyRequestDto createReplyRequestDto) {
         replyRepository.save(createReplyRequestDto.toEntity(UUID.randomUUID().toString().substring(0, 32)));
     }
 
+    @Transactional
     @Override
     public void updateReply(UpdateReplyRequestDto updateReplyRequestDto) {
         Reply reply = replyRepository.findByReplyUuidAndDeletedFalse(updateReplyRequestDto.getReplyUuid())
@@ -42,6 +46,7 @@ public class ReplyServiceImpl implements ReplyService {
         replyRepository.save(updateReplyRequestDto.toEntity(reply));
     }
 
+    @Transactional
     @Override
     public void deleteReply(String memberUuid, String replyUuid) {
         Reply reply = replyRepository.findByReplyUuidAndDeletedFalse(replyUuid)
@@ -60,6 +65,7 @@ public class ReplyServiceImpl implements ReplyService {
         return reReplyList.stream().map(GetReReplyResponseDto::from).toList();
     }
 
+    @Transactional
     @Override
     public void createChildReply(CreateChildReplyRequestDto childReplyRequestDto) {
         Reply parentReply = replyRepository.findByReplyUuidAndDeletedFalse(childReplyRequestDto.getParentReplyUuid())
@@ -73,5 +79,29 @@ public class ReplyServiceImpl implements ReplyService {
         childReplyRequestDto.setBoardUuid(parentReply.getBoardUuid());
 
         replyRepository.save(childReplyRequestDto.toEntity(UUID.randomUUID().toString().substring(0, 32)));
+    }
+
+    @Override
+    public GetReplyDetailResponseDto getReplyDetail(String replyUuid, String memberUuid) {
+        Reply reply = replyRepository.findByReplyUuidAndDeletedFalse(replyUuid)
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
+
+        boolean isMine = memberUuid != null && reply.getMemberUuid().equals(memberUuid);
+
+        return GetReplyDetailResponseDto.from(reply, isMine);
+    }
+
+    @Override
+    public GetReplyDetailResponseDto getChildReplyDetail(String memberUuid, String replyUuid) {
+        Reply reply = replyRepository.findByReplyUuidAndDeletedFalse(replyUuid)
+                .orElseThrow(() -> new IllegalArgumentException("대댓글을 찾을 수 없습니다."));
+
+        if(reply.getParentReplyUuid() != null) {
+            throw new IllegalArgumentException("해당 댓글은 대댓글이 아닙니다.");
+        }
+
+        boolean isMine = memberUuid != null && reply.getMemberUuid().equals(memberUuid);
+
+        return GetReplyDetailResponseDto.from(reply, isMine);
     }
 }
