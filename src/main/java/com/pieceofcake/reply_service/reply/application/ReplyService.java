@@ -2,7 +2,6 @@ package com.pieceofcake.reply_service.reply.application;
 
 
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
-import com.pieceofcake.reply_service.reply.dto.in.DeleteReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
@@ -17,7 +16,7 @@ public interface ReplyService {
 
     void updateReply(UpdateReplyRequestDto updateReplyRequestDto);
 
-    void deleteReply(DeleteReplyRequestDto deleteReplyRequestDto);
+    void deleteReply(String memberUuid, String replyUuid);
 
     List<GetReReplyResponseDto> getReReplyListByParentReplyUuid(String parentReplyUuid);
 }

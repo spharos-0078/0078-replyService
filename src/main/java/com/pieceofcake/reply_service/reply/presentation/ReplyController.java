@@ -4,12 +4,10 @@ import com.pieceofcake.reply_service.common.entity.BaseResponseEntity;
 import com.pieceofcake.reply_service.common.entity.BaseResponseStatus;
 import com.pieceofcake.reply_service.reply.application.ReplyService;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
-import com.pieceofcake.reply_service.reply.dto.in.DeleteReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
 import com.pieceofcake.reply_service.reply.vo.in.CreateReplyRequestVo;
-import com.pieceofcake.reply_service.reply.vo.in.DeleteReplyRequestVo;
 import com.pieceofcake.reply_service.reply.vo.in.UpdateReplyRequestVo;
 import com.pieceofcake.reply_service.reply.vo.out.GetReReplyResponseVo;
 import com.pieceofcake.reply_service.reply.vo.out.GetReplyResponseVo;
@@ -62,12 +60,12 @@ public class ReplyController {
 
     // 댓글 삭제
     @Operation(summary = "댓글 삭제")
-    @DeleteMapping
+    @DeleteMapping("/{replyUuid}")
     public BaseResponseEntity<Void> deleteReply(
             @RequestHeader("X-Member-Uuid") String memberUuid,
-            @RequestBody DeleteReplyRequestVo deleteReplyRequestVo
+            @PathVariable String replyUuid
     ) {
-        replyService.deleteReply(DeleteReplyRequestDto.from(memberUuid, deleteReplyRequestVo));
+        replyService.deleteReply(memberUuid, replyUuid);
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
 

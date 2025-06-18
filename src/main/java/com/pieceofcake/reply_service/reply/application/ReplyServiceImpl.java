@@ -2,7 +2,6 @@ package com.pieceofcake.reply_service.reply.application;
 
 import com.pieceofcake.reply_service.reply.domain.Reply;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
-import com.pieceofcake.reply_service.reply.dto.in.DeleteReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
@@ -43,11 +42,11 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Override
-    public void deleteReply(DeleteReplyRequestDto deleteReplyRequestDto) {
-        Reply reply = replyRepository.findByReplyUuidAndDeletedFalse(deleteReplyRequestDto.getReplyUuid())
+    public void deleteReply(String memberUuid, String replyUuid) {
+        Reply reply = replyRepository.findByReplyUuidAndDeletedFalse(replyUuid)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
 
-        if(!reply.getMemberUuid().equals(deleteReplyRequestDto.getMemberUuid())) {
+        if(!reply.getMemberUuid().equals(memberUuid)) {
             throw new IllegalArgumentException("본인이 작성한 댓글만 삭제할 수 있습니다.");
         }
         reply.softDelete();
