@@ -1,14 +1,18 @@
 package com.pieceofcake.reply_service.reply.application;
 
+import com.pieceofcake.reply_service.reply.domain.BoardType;
 import com.pieceofcake.reply_service.reply.domain.Reply;
 import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
+import com.pieceofcake.reply_service.reply.dto.out.GetCommunityReplyUuidResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyDetailResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
 import com.pieceofcake.reply_service.reply.infrastructure.ReplyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +26,10 @@ public class ReplyServiceImpl implements ReplyService {
     private final ReplyRepository replyRepository;
 
     @Override
-    public List<GetReplyResponseDto> getReplyListByBoardTypeAndBoardUuid(String BoardType, String boardUuid) {
-        List<Reply> replyList = replyRepository.findByBoardUuidAndDeletedFalse(boardUuid);
-        return replyList.stream().map(GetReplyResponseDto::from).toList();
+    public Page<GetCommunityReplyUuidResponseDto> getReplyListByBoardTypeAndBoardUuid(String boardType, String boardUuid, Pageable pageable) {
+        Page<GetCommunityReplyUuidResponseDto> replyList = replyRepository.findByBoardTypeAndBoardUuidAndDeletedFalse(BoardType.valueOf(boardType), boardUuid, pageable)
+                .map(GetCommunityReplyUuidResponseDto::from);
+        return replyList;
     }
 
     @Transactional

@@ -4,16 +4,17 @@ package com.pieceofcake.reply_service.reply.application;
 import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
+import com.pieceofcake.reply_service.reply.dto.out.GetCommunityReplyUuidResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyDetailResponseDto;
-import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
-import com.pieceofcake.reply_service.reply.vo.in.CreateReplyRequestVo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ReplyService {
 
-    List<GetReplyResponseDto> getReplyListByBoardTypeAndBoardUuid(String boardType, String boardUuid);
+    Page<GetCommunityReplyUuidResponseDto> getReplyListByBoardTypeAndBoardUuid(String boardType, String boardUuid, Pageable pageable);
 
     void createReply(CreateReplyRequestDto createReplyRequestDto);
 

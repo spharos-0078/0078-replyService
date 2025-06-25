@@ -6,17 +6,19 @@ import com.pieceofcake.reply_service.reply.application.ReplyService;
 import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
+import com.pieceofcake.reply_service.reply.dto.out.GetCommunityReplyUuidResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyDetailResponseDto;
-import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
 import com.pieceofcake.reply_service.reply.vo.in.CreateChildReplyRequestVo;
 import com.pieceofcake.reply_service.reply.vo.in.CreateReplyRequestVo;
 import com.pieceofcake.reply_service.reply.vo.in.UpdateReplyRequestVo;
+import com.pieceofcake.reply_service.reply.vo.out.GetCommunityReplyUuidResponseVo;
 import com.pieceofcake.reply_service.reply.vo.out.GetReReplyResponseVo;
 import com.pieceofcake.reply_service.reply.vo.out.GetReplyDetailResponseVo;
-import com.pieceofcake.reply_service.reply.vo.out.GetReplyResponseVo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,21 +30,36 @@ public class ReplyController {
 
     private final ReplyService replyService;
 
-    // 페이지네이션 적용할 것
-    @Operation(summary = "게시판 타입 + UUID별 댓글 전체 조회 (커뮤니티)")
+//    // 페이지네이션 적용할 것
+//    @Operation(summary = "게시판 타입 + UUID별 댓글 전체 조회 (커뮤니티)")
+//    @GetMapping("/list/{boardType}/{boardUuid}")
+//    public BaseResponseEntity<List<GetReplyResponseVo>> getReplyList(
+//            @PathVariable String boardType,
+//            @PathVariable String boardUuid
+//    ) {
+//        List<GetReplyResponseVo> result = replyService.getReplyListByBoardTypeAndBoardUuid(boardType, boardUuid)
+//                .stream().map(GetReplyResponseDto::toVo).toList();
+//        return new BaseResponseEntity<>(result);
+//    }
+
+    // 커뮤니티 댓글 UUID 리스트 조회
+    @Operation(summary = "커뮤니티 댓글 UUID 리스트 조회 (전체 조회)")
     @GetMapping("/list/{boardType}/{boardUuid}")
-    public BaseResponseEntity<List<GetReplyResponseVo>> getReplyList(
+    public BaseResponseEntity<List<GetCommunityReplyUuidResponseVo>> getCommunityReplyUuidList(
             @PathVariable String boardType,
-            @PathVariable String boardUuid
+            @PathVariable String boardUuid,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        List<GetReplyResponseVo> result = replyService.getReplyListByBoardTypeAndBoardUuid(boardType, boardUuid)
-                .stream().map(GetReplyResponseDto::toVo).toList();
-        return new BaseResponseEntity<>(result);
+        Pageable pageable = PageRequest.of(page, size);
+        List<GetCommunityReplyUuidResponseVo> replyList = replyService.getReplyListByBoardTypeAndBoardUuid(boardType, boardUuid, pageable)
+                .stream().map(GetCommunityReplyUuidResponseDto::toVo).toList();
+        return new BaseResponseEntity<>(replyList);
     }
 
 
     // 댓글 생성
-    @Operation(summary = "댓글 생성")
+    @Operation(summary = "커뮤니티 댓글 생성")
     @PostMapping
     public BaseResponseEntity<Void> createReply(
             @RequestHeader("X-Member-Uuid") String memberUuid,
@@ -54,7 +71,7 @@ public class ReplyController {
 
 
     // 댓글 수정
-    @Operation(summary = "댓글 수정")
+    @Operation(summary = "커뮤니티 댓글 수정")
     @PutMapping
     public BaseResponseEntity<Void> updateReply(
             @RequestHeader("X-Member-Uuid") String memberUuid,
@@ -66,7 +83,7 @@ public class ReplyController {
 
 
     // 댓글 삭제
-    @Operation(summary = "댓글 삭제")
+    @Operation(summary = "커뮤니티 댓글 삭제")
     @DeleteMapping("/{replyUuid}")
     public BaseResponseEntity<Void> deleteReply(
             @RequestHeader("X-Member-Uuid") String memberUuid,
@@ -78,7 +95,7 @@ public class ReplyController {
 
 
     // 대댓글 전체 조회 (부모 댓글 기준으로 대댓글 조회)
-    @Operation(summary = "대댓글 전체 조회 (커뮤니티 & 문의)")
+    @Operation(summary = "커뮤니티 대댓글 전체 조회")
     @GetMapping("/child/{parentReplyUuid}")
     public BaseResponseEntity<List<GetReReplyResponseVo>> getReReplyList(
             @PathVariable String parentReplyUuid
