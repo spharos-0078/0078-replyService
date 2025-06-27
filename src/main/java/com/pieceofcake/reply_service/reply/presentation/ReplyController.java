@@ -4,12 +4,14 @@ import com.pieceofcake.reply_service.common.entity.BaseResponseEntity;
 import com.pieceofcake.reply_service.common.entity.BaseResponseStatus;
 import com.pieceofcake.reply_service.reply.application.ReplyService;
 import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
+import com.pieceofcake.reply_service.reply.dto.in.CreateReplyLikeRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetCommunityReplyUuidResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyDetailResponseDto;
 import com.pieceofcake.reply_service.reply.vo.in.CreateChildReplyRequestVo;
+import com.pieceofcake.reply_service.reply.vo.in.CreateReplyLikeRequestVo;
 import com.pieceofcake.reply_service.reply.vo.in.CreateReplyRequestVo;
 import com.pieceofcake.reply_service.reply.vo.in.UpdateReplyRequestVo;
 import com.pieceofcake.reply_service.reply.vo.out.GetCommunityReplyUuidResponseVo;
@@ -29,18 +31,6 @@ import java.util.List;
 public class ReplyController {
 
     private final ReplyService replyService;
-
-//    // 페이지네이션 적용할 것
-//    @Operation(summary = "게시판 타입 + UUID별 댓글 전체 조회 (커뮤니티)")
-//    @GetMapping("/list/{boardType}/{boardUuid}")
-//    public BaseResponseEntity<List<GetReplyResponseVo>> getReplyList(
-//            @PathVariable String boardType,
-//            @PathVariable String boardUuid
-//    ) {
-//        List<GetReplyResponseVo> result = replyService.getReplyListByBoardTypeAndBoardUuid(boardType, boardUuid)
-//                .stream().map(GetReplyResponseDto::toVo).toList();
-//        return new BaseResponseEntity<>(result);
-//    }
 
     // 커뮤니티 댓글 UUID 리스트 조회
     @Operation(summary = "커뮤니티 댓글 UUID 리스트 조회 (전체 조회)")
@@ -131,6 +121,28 @@ public class ReplyController {
             @RequestBody CreateChildReplyRequestVo createChildReplyRequestVo
     ) {
         replyService.createChildReply(CreateChildReplyRequestDto.from(memberUuid, parentReplyUuid, createChildReplyRequestVo));
+        return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
+    }
+
+    // 댓글 찜하기
+    @Operation(summary = "댓글 찜하기")
+    @PostMapping("/like")
+    public BaseResponseEntity<Void> likeReply(
+            @RequestHeader("X-Member-Uuid") String memberUuid,
+            @RequestBody CreateReplyLikeRequestVo createReplyLikeRequestVo
+    ) {
+        replyService.likeReply(CreateReplyLikeRequestDto.from(memberUuid, createReplyLikeRequestVo));
+        return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
+    }
+
+    // 댓글 찜 취소하기
+    @Operation(summary = "댓글 찜 취소하기")
+    @DeleteMapping("/like/{id}")
+    public BaseResponseEntity<Void> cancelLikeReply(
+            @RequestHeader("X-Member-Uuid") String memberUuid,
+            @PathVariable String id
+    ) {
+        replyService.cancelLikeReply(id);
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
 

@@ -20,4 +20,6 @@ public interface ReplyRepository extends MongoRepository<Reply, String> {
 
     @Query("{ 'replyUuid': ?0, 'deleted': false }")
     Optional<Reply> findByReplyUuidAndDeletedFalse(String replyUuid);
+
+    Integer countByParentReplyUuid(String parentReplyUuid);
 }

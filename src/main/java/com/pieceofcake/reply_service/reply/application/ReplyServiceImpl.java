@@ -3,12 +3,14 @@ package com.pieceofcake.reply_service.reply.application;
 import com.pieceofcake.reply_service.reply.domain.BoardType;
 import com.pieceofcake.reply_service.reply.domain.Reply;
 import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
+import com.pieceofcake.reply_service.reply.dto.in.CreateReplyLikeRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetCommunityReplyUuidResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReReplyResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyDetailResponseDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetReplyResponseDto;
+import com.pieceofcake.reply_service.reply.infrastructure.ReplyLikeRepository;
 import com.pieceofcake.reply_service.reply.infrastructure.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class ReplyServiceImpl implements ReplyService {
 
     private final ReplyRepository replyRepository;
+    private final ReplyLikeRepository replyLikeRepository;
 
     @Override
     public Page<GetCommunityReplyUuidResponseDto> getReplyListByBoardTypeAndBoardUuid(String boardType, String boardUuid, Pageable pageable) {
@@ -93,20 +96,31 @@ public class ReplyServiceImpl implements ReplyService {
 
         boolean isMine = memberUuid != null && reply.getMemberUuid().equals(memberUuid);
 
-        return GetReplyDetailResponseDto.from(reply, isMine);
+        Integer likeCount = replyLikeRepository.countByReplyUuid(replyUuid);
+        Integer childReplyCount = replyRepository.countByParentReplyUuid(replyUuid);
+
+        return GetReplyDetailResponseDto.from(reply, isMine, likeCount, childReplyCount);
+    }
+
+//    @Override
+//    public GetReplyDetailResponseDto getChildReplyDetail(String memberUuid, String replyUuid) {
+//        Reply reply = replyRepository.findByReplyUuidAndDeletedFalse(replyUuid)
+//                .orElseThrow(() -> new IllegalArgumentException("대댓글을 찾을 수 없습니다."));
+//
+//        if(reply.getParentReplyUuid() != null) {
+//            throw new IllegalArgumentException("해당 댓글은 대댓글이 아닙니다.");
+//        }
+//
+//        boolean isMine = memberUuid != null && reply.getMemberUuid().equals(memberUuid);
+//
+//        return GetReplyDetailResponseDto.from(reply, isMine);
+//    }
+
+    @Override
+    public void likeReply(CreateReplyLikeRequestDto createReplyLikeRequestDto) {
+        replyLikeRepository.save(createReplyLikeRequestDto.toEntity());
     }
 
     @Override
-    public GetReplyDetailResponseDto getChildReplyDetail(String memberUuid, String replyUuid) {
-        Reply reply = replyRepository.findByReplyUuidAndDeletedFalse(replyUuid)
-                .orElseThrow(() -> new IllegalArgumentException("대댓글을 찾을 수 없습니다."));
-
-        if(reply.getParentReplyUuid() != null) {
-            throw new IllegalArgumentException("해당 댓글은 대댓글이 아닙니다.");
-        }
-
-        boolean isMine = memberUuid != null && reply.getMemberUuid().equals(memberUuid);
-
-        return GetReplyDetailResponseDto.from(reply, isMine);
-    }
+    public void cancelLikeReply(String id) { replyLikeRepository.deleteById(id); }
 }

@@ -19,6 +19,9 @@ public class GetReplyDetailResponseVo {
     private LocalDateTime createdAt;
     private boolean isMine;
 
+    private Integer likeCount;
+    private Integer childReplyCount;
+
     @Builder
     public GetReplyDetailResponseVo(
             String replyUuid,
@@ -27,7 +30,9 @@ public class GetReplyDetailResponseVo {
             BoardType boardType,
             String memberUuid,
             LocalDateTime createdAt,
-            boolean isMine
+            boolean isMine,
+            Integer likeCount,
+            Integer childReplyCount
     ) {
         this.replyUuid = replyUuid;
         this.replyContent = replyContent;
@@ -36,5 +41,7 @@ public class GetReplyDetailResponseVo {
         this.memberUuid = memberUuid;
         this.createdAt = createdAt;
         this.isMine = isMine;
+        this.likeCount = likeCount;
+        this.childReplyCount = childReplyCount;
     }
 }

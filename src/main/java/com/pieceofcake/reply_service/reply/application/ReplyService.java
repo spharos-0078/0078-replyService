@@ -2,6 +2,7 @@ package com.pieceofcake.reply_service.reply.application;
 
 
 import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
+import com.pieceofcake.reply_service.reply.dto.in.CreateReplyLikeRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.UpdateReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.out.GetCommunityReplyUuidResponseDto;
@@ -28,5 +29,9 @@ public interface ReplyService {
 
     GetReplyDetailResponseDto getReplyDetail(String replyUuid, String memberUuid);
 
-    GetReplyDetailResponseDto getChildReplyDetail(String memberUuid, String replyUuid);
+//    GetReplyDetailResponseDto getChildReplyDetail(String memberUuid, String replyUuid);
+
+    void likeReply(CreateReplyLikeRequestDto createReplyLikeRequestDto);
+
+    void cancelLikeReply(String id);
 }
