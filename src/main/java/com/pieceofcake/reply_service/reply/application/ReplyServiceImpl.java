@@ -1,6 +1,7 @@
 package com.pieceofcake.reply_service.reply.application;
 
 import com.pieceofcake.reply_service.reply.domain.BoardType;
+import com.pieceofcake.reply_service.reply.domain.LikedReply;
 import com.pieceofcake.reply_service.reply.domain.Reply;
 import com.pieceofcake.reply_service.reply.dto.in.CreateChildReplyRequestDto;
 import com.pieceofcake.reply_service.reply.dto.in.CreateReplyLikeRequestDto;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class ReplyServiceImpl implements ReplyService {
     private final ReplyRepository replyRepository;
     private final ReplyLikeRepository replyLikeRepository;
 
+
     @Override
     public Page<GetCommunityReplyUuidResponseDto> getReplyListByBoardTypeAndBoardUuid(String boardType, String boardUuid, Pageable pageable) {
         Page<GetCommunityReplyUuidResponseDto> replyList = replyRepository.findByBoardTypeAndBoardUuidAndDeletedFalse(BoardType.valueOf(boardType), boardUuid, pageable)
@@ -35,11 +38,13 @@ public class ReplyServiceImpl implements ReplyService {
         return replyList;
     }
 
+
     @Transactional
     @Override
     public void createReply(CreateReplyRequestDto createReplyRequestDto) {
         replyRepository.save(createReplyRequestDto.toEntity(UUID.randomUUID().toString().substring(0, 32)));
     }
+
 
     @Transactional
     @Override
@@ -54,6 +59,7 @@ public class ReplyServiceImpl implements ReplyService {
         replyRepository.save(updateReplyRequestDto.toEntity(reply));
     }
 
+
     @Transactional
     @Override
     public void deleteReply(String memberUuid, String replyUuid) {
@@ -67,11 +73,13 @@ public class ReplyServiceImpl implements ReplyService {
         replyRepository.save(reply);
     }
 
+
     @Override
     public List<GetReReplyResponseDto> getReReplyListByParentReplyUuid(String parentReplyUuid) {
         List<Reply> reReplyList = replyRepository.findByParentReplyUuidAndDeletedFalse(parentReplyUuid);
         return reReplyList.stream().map(GetReReplyResponseDto::from).toList();
     }
+
 
     @Transactional
     @Override
@@ -89,6 +97,7 @@ public class ReplyServiceImpl implements ReplyService {
         replyRepository.save(childReplyRequestDto.toEntity(UUID.randomUUID().toString().substring(0, 32)));
     }
 
+
     @Override
     public GetReplyDetailResponseDto getReplyDetail(String memberUuid, String replyUuid) {
         Reply reply = replyRepository.findByReplyUuidAndDeletedFalse(replyUuid)
@@ -102,25 +111,16 @@ public class ReplyServiceImpl implements ReplyService {
         return GetReplyDetailResponseDto.from(reply, isMine, likeCount, childReplyCount);
     }
 
-//    @Override
-//    public GetReplyDetailResponseDto getChildReplyDetail(String memberUuid, String replyUuid) {
-//        Reply reply = replyRepository.findByReplyUuidAndDeletedFalse(replyUuid)
-//                .orElseThrow(() -> new IllegalArgumentException("대댓글을 찾을 수 없습니다."));
-//
-//        if(reply.getParentReplyUuid() != null) {
-//            throw new IllegalArgumentException("해당 댓글은 대댓글이 아닙니다.");
-//        }
-//
-//        boolean isMine = memberUuid != null && reply.getMemberUuid().equals(memberUuid);
-//
-//        return GetReplyDetailResponseDto.from(reply, isMine);
-//    }
 
     @Override
     public void likeReply(CreateReplyLikeRequestDto createReplyLikeRequestDto) {
-        replyLikeRepository.save(createReplyLikeRequestDto.toEntity());
-    }
+        Optional<LikedReply> likedReply = replyLikeRepository
+                .findByReplyUuidAndMemberUuid(createReplyLikeRequestDto.getReplyUuid(), createReplyLikeRequestDto.getMemberUuid());
 
-    @Override
-    public void cancelLikeReply(String id) { replyLikeRepository.deleteById(id); }
+        if(likedReply.isPresent()) {
+            replyLikeRepository.delete(likedReply.get());
+        } else {
+            replyLikeRepository.save(createReplyLikeRequestDto.toEntity());
+        }
+    }
 }

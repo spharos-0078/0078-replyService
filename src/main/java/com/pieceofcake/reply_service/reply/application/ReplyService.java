@@ -29,9 +29,5 @@ public interface ReplyService {
 
     GetReplyDetailResponseDto getReplyDetail(String replyUuid, String memberUuid);
 
-//    GetReplyDetailResponseDto getChildReplyDetail(String memberUuid, String replyUuid);
-
     void likeReply(CreateReplyLikeRequestDto createReplyLikeRequestDto);
-
-    void cancelLikeReply(String id);
 }
