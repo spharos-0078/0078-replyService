@@ -1,5 +1,7 @@
 package com.pieceofcake.reply_service.reply.application;
 
+import com.pieceofcake.reply_service.kafka.event.AlertKafkaEvent;
+import com.pieceofcake.reply_service.kafka.producer.KafkaProducer;
 import com.pieceofcake.reply_service.reply.domain.BoardType;
 import com.pieceofcake.reply_service.reply.domain.LikedReply;
 import com.pieceofcake.reply_service.reply.domain.Reply;
@@ -18,6 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +33,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     private final ReplyRepository replyRepository;
     private final ReplyLikeRepository replyLikeRepository;
+    private final KafkaProducer kafkaProducer;
 
 
     @Override
@@ -95,6 +100,19 @@ public class ReplyServiceImpl implements ReplyService {
         childReplyRequestDto.setBoardUuid(parentReply.getBoardUuid());
 
         replyRepository.save(childReplyRequestDto.toEntity(UUID.randomUUID().toString().substring(0, 32)));
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                kafkaProducer.updateReplyAlertEvent(AlertKafkaEvent.builder()
+                        .key(childReplyRequestDto.getParentReplyUuid())
+                        .message("대댓글이 달렸습니다!")
+                        .memberUuid(parentReply.getMemberUuid())
+                        .commonAlert(false)
+                        .build()
+                );
+            }
+        });
     }
 
 
