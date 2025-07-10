@@ -33,7 +33,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public Page<GetCommunityReplyUuidResponseDto> getReplyListByBoardTypeAndBoardUuid(String boardType, String boardUuid, Pageable pageable) {
-        Page<GetCommunityReplyUuidResponseDto> replyList = replyRepository.findByBoardTypeAndBoardUuidAndDeletedFalse(BoardType.valueOf(boardType), boardUuid, pageable)
+        Page<GetCommunityReplyUuidResponseDto> replyList = replyRepository.findByBoardTypeAndBoardUuidAndParentReplyUuidIsNullAndDeletedFalse(BoardType.valueOf(boardType), boardUuid, pageable)
                 .map(GetCommunityReplyUuidResponseDto::from);
         return replyList;
     }

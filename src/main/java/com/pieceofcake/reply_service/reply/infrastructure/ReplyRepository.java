@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface ReplyRepository extends MongoRepository<Reply, String> {
 
-    Page<Reply> findByBoardTypeAndBoardUuidAndDeletedFalse(BoardType boardType, String boardUuid, Pageable pageable);
+    Page<Reply> findByBoardTypeAndBoardUuidAndParentReplyUuidIsNullAndDeletedFalse(BoardType boardType, String boardUuid, Pageable pageable);
 
     List<Reply> findByBoardUuidAndDeletedFalse(String boardUuid);
 
