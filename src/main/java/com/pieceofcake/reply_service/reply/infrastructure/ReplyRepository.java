@@ -12,11 +12,11 @@ import java.util.Optional;
 
 public interface ReplyRepository extends MongoRepository<Reply, String> {
 
-    Page<Reply> findByBoardTypeAndBoardUuidAndParentReplyUuidIsNullAndDeletedFalse(BoardType boardType, String boardUuid, Pageable pageable);
+    Page<Reply> findByBoardTypeAndBoardUuidAndParentReplyUuidIsNull(BoardType boardType, String boardUuid, Pageable pageable);
 
     List<Reply> findByBoardUuidAndDeletedFalse(String boardUuid);
 
-    List<Reply> findByParentReplyUuidAndDeletedFalse(String parentReplyUuid);
+    List<Reply> findByParentReplyUuid(String parentReplyUuid);
 
     @Query("{ 'replyUuid': ?0, 'deleted': false }")
     Optional<Reply> findByReplyUuidAndDeletedFalse(String replyUuid);

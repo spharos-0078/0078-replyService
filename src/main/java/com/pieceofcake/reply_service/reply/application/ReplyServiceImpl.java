@@ -33,7 +33,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public Page<GetCommunityReplyUuidResponseDto> getReplyListByBoardTypeAndBoardUuid(String boardType, String boardUuid, Pageable pageable) {
-        Page<GetCommunityReplyUuidResponseDto> replyList = replyRepository.findByBoardTypeAndBoardUuidAndParentReplyUuidIsNullAndDeletedFalse(BoardType.valueOf(boardType), boardUuid, pageable)
+        Page<GetCommunityReplyUuidResponseDto> replyList = replyRepository.findByBoardTypeAndBoardUuidAndParentReplyUuidIsNull(BoardType.valueOf(boardType), boardUuid, pageable)
                 .map(GetCommunityReplyUuidResponseDto::from);
         return replyList;
     }
@@ -76,7 +76,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public List<GetReReplyResponseDto> getReReplyListByParentReplyUuid(String parentReplyUuid) {
-        List<Reply> reReplyList = replyRepository.findByParentReplyUuidAndDeletedFalse(parentReplyUuid);
+        List<Reply> reReplyList = replyRepository.findByParentReplyUuid(parentReplyUuid);
         return reReplyList.stream().map(GetReReplyResponseDto::from).toList();
     }
 

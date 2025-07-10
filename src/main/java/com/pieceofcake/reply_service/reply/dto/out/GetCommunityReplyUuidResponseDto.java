@@ -11,21 +11,25 @@ import lombok.NoArgsConstructor;
 public class GetCommunityReplyUuidResponseDto {
 
     private String replyUuid;
+    private boolean deleted;
 
     @Builder
-    public GetCommunityReplyUuidResponseDto(String replyUuid) {
+    public GetCommunityReplyUuidResponseDto(String replyUuid, boolean deleted) {
         this.replyUuid = replyUuid;
+        this.deleted = deleted;
     }
 
     public static GetCommunityReplyUuidResponseDto from(Reply reply) {
         return GetCommunityReplyUuidResponseDto.builder()
                 .replyUuid(reply.getReplyUuid())
+                .deleted(reply.isDeleted())
                 .build();
     }
 
     public GetCommunityReplyUuidResponseVo toVo() {
         return GetCommunityReplyUuidResponseVo.builder()
                 .replyUuid(this.replyUuid)
+                .deleted(this.deleted)
                 .build();
     }
 }
